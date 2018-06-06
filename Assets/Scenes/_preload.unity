@@ -140,10 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4303844021fc6bb43868d0b5c5681d04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  persistentScenes:
-  - m_SceneAsset: {fileID: 102900000, guid: 8d86cbb2e6a87584295f7c1d200563c8, type: 3}
-    m_SceneName: PlayerScene
-  allScenes:
+  managedScenes:
   - m_SceneAsset: {fileID: 102900000, guid: 2515a00d8be5c5f4e815ac8feeb585f4, type: 3}
     m_SceneName: Tile0
   - m_SceneAsset: {fileID: 102900000, guid: 32067e3908f9a6843a11cbe59f05db88, type: 3}
@@ -155,6 +152,8 @@ MonoBehaviour:
   loadScenesOnAwake:
   - m_SceneAsset: {fileID: 102900000, guid: 2515a00d8be5c5f4e815ac8feeb585f4, type: 3}
     m_SceneName: Tile0
+  - m_SceneAsset: {fileID: 102900000, guid: 8d86cbb2e6a87584295f7c1d200563c8, type: 3}
+    m_SceneName: PlayerScene
 --- !u!4 &1602915640
 Transform:
   m_ObjectHideFlags: 0

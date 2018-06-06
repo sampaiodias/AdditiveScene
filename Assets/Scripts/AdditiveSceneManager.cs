@@ -4,8 +4,9 @@ using UnityEngine.SceneManagement;
 
 public class AdditiveSceneManager : MonoBehaviour
 {
-    public SceneField[] persistentScenes;
-    public SceneField[] allScenes;
+    [Tooltip("Attach scenes that may be unloaded during runtime using this Manager.")]
+    public SceneField[] managedScenes;
+    [Tooltip("Optional feature. The first scene of the list will be set as the Active scene.")]
     public SceneField[] loadScenesOnAwake;
 
     private int current;
@@ -18,15 +19,14 @@ public class AdditiveSceneManager : MonoBehaviour
         SetThisAsSingleton();
         FillActiveScenesDictionary();
 
+        int preloadScene = SceneManager.GetActiveScene().buildIndex;
+
         for (int i = 0; i < loadScenesOnAwake.Length; i++)
         {
             Load(loadScenesOnAwake[i], i == 0);
         }
 
-        for (int i = 0; i < persistentScenes.Length; i++)
-        {
-            Load(persistentScenes[i]);
-        }
+        SceneManager.UnloadSceneAsync(preloadScene);
     }
 
     public void Load(SceneField[] visibleScenes, bool unloadOthers = true)
@@ -41,19 +41,19 @@ public class AdditiveSceneManager : MonoBehaviour
 
         if (unloadOthers)
         {
-            for (int i = 0; i < allScenes.Length; i++)
+            for (int i = 0; i < managedScenes.Length; i++)
             {
                 bool unloadThisScene = true;
 
                 for (int j = 0; j < visibleScenes.Length; j++)
                 {
-                    if (allScenes[i].SceneName == visibleScenes[j].SceneName)
+                    if (managedScenes[i].SceneName == visibleScenes[j].SceneName)
                         unloadThisScene = false;
                 }
 
                 if (unloadThisScene)
                 {
-                    Unload(allScenes[i]);
+                    Unload(managedScenes[i]);
                 }
             }
         }
@@ -97,16 +97,10 @@ public class AdditiveSceneManager : MonoBehaviour
 
     private void FillActiveScenesDictionary()
     {
-        for (int i = 0; i < persistentScenes.Length; i++)
+        for (int i = 0; i < managedScenes.Length; i++)
         {
-            if (!activeScenes.ContainsKey(persistentScenes[i].SceneName))
-                activeScenes.Add(persistentScenes[i].SceneName, false);
-        }
-
-        for (int i = 0; i < allScenes.Length; i++)
-        {
-            if (!activeScenes.ContainsKey(allScenes[i].SceneName))
-                activeScenes.Add(allScenes[i].SceneName, false);
+            if (!activeScenes.ContainsKey(managedScenes[i].SceneName))
+                activeScenes.Add(managedScenes[i].SceneName, false);
         }
 
         for (int i = 0; i < loadScenesOnAwake.Length; i++)
