@@ -15,8 +15,7 @@ public class AdditiveSceneManager : MonoBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-        Instance = this;
+        SetThisAsSingleton();
         FillActiveScenesDictionary();
 
         for (int i = 0; i < loadScenesOnAwake.Length; i++)
@@ -115,5 +114,14 @@ public class AdditiveSceneManager : MonoBehaviour
             if (!activeScenes.ContainsKey(loadScenesOnAwake[i].SceneName))
                 activeScenes.Add(loadScenesOnAwake[i].SceneName, false);
         }
+    }
+
+    private void SetThisAsSingleton()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+        DontDestroyOnLoad(gameObject);
     }
 }
