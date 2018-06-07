@@ -331,6 +331,16 @@ Prefab:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114600358418675790, guid: 0a944281124084343b42499afa9131a3,
+        type: 2}
+      propertyPath: activeScene.m_SceneAsset
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114600358418675790, guid: 0a944281124084343b42499afa9131a3,
+        type: 2}
+      propertyPath: activeScene.m_SceneName
+      value: Tile1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0a944281124084343b42499afa9131a3, type: 2}
   m_IsPrefabParent: 0

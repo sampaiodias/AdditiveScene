@@ -6,6 +6,7 @@ public class AdditiveSceneCollider : MonoBehaviour
     public string tagToCheck = "Player";
     [Space]
     public SceneField[] visibleScenes;
+    public SceneField activeScene;
     public UnityEvent onEnter;
 
     private bool checking;
@@ -24,7 +25,10 @@ public class AdditiveSceneCollider : MonoBehaviour
                 checking = false;
                 onEnter.Invoke();
 
-                AdditiveSceneManager.Instance.Load(visibleScenes);
+                if (activeScene != null)
+                    AdditiveSceneManager.Instance.Load(visibleScenes, activeScene: activeScene);
+                else
+                    AdditiveSceneManager.Instance.Load(visibleScenes);
             }
         }
     }

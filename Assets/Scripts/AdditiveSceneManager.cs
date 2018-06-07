@@ -12,7 +12,7 @@ public class AdditiveSceneManager : MonoBehaviour
     private int current;
 
     public static AdditiveSceneManager Instance;
-    private static Dictionary<string, bool> activeScenes = new Dictionary<string, bool>();
+    private static Dictionary<string, bool> loadedScenes = new Dictionary<string, bool>();
 
     private void Awake()
     {
@@ -29,84 +29,139 @@ public class AdditiveSceneManager : MonoBehaviour
         SceneManager.UnloadSceneAsync(preloadScene);
     }
 
-    public void Load(SceneField[] visibleScenes, bool unloadOthers = true)
+    /// <summary>
+    /// Loads all Scenes informed (if the Scene is already loaded, nothing happens). After it, all other Scenes are unloaded.
+    /// </summary>
+    /// <param name="visibleScenes">Scenes that need to be visible. Scenes that are not loaded yet will be loaded.</param>
+    /// <param name="activeScene">Set the Scene as active (The active Scene is the Scene which will be used as the target for new GameObjects instantiated by scripts and from what scene the lighting settings are used).</param>
+    /// <param name="unloadOthers">If true, all managed Scenes that are not contained on visibleScenes will be unloaded.</param>
+    public void Load(SceneField[] visibleScenes, SceneField activeScene = null, bool unloadOthers = true)
     {
         for (int i = 0; i < visibleScenes.Length; i++)
         {
-            if (IsSceneActive(visibleScenes[i]) == false)
+            if (IsSceneLoaded(visibleScenes[i]) == false)
             {
                 Load(visibleScenes[i]);
             }
         }
 
+        if (activeScene != null && activeScene.SceneName != "")
+        {
+            if (IsSceneLoaded(activeScene))
+            {
+                SetActiveScene(activeScene);
+            }
+            else
+            {
+                Load(activeScene, setActiveScene: true);
+            }
+        }
+
         if (unloadOthers)
         {
-            for (int i = 0; i < managedScenes.Length; i++)
-            {
-                bool unloadThisScene = true;
-
-                for (int j = 0; j < visibleScenes.Length; j++)
-                {
-                    if (managedScenes[i].SceneName == visibleScenes[j].SceneName)
-                        unloadThisScene = false;
-                }
-
-                if (unloadThisScene)
-                {
-                    Unload(managedScenes[i]);
-                }
-            }
+            UnloadAllNonVisible(visibleScenes);
         }
     }
 
+    /// <summary>
+    /// Loads the Scene.
+    /// </summary>
+    /// <param name="scene">Scene to be loaded</param>
+    /// <param name="setActiveScene">If true, the Scene will be set as active (The active Scene is the Scene which will be used as the target for new GameObjects instantiated by scripts and from what scene the lighting settings are used).</param>
     public void Load(SceneField scene, bool setActiveScene = false)
     {
-        MarkSceneActive(scene, true);
+        MarkSceneAsLoaded(scene, true);
         var asyncOperation = SceneManager.LoadSceneAsync(scene.SceneName, LoadSceneMode.Additive);
         asyncOperation.allowSceneActivation = true;
 
         if (setActiveScene)
         {
-            asyncOperation.completed += a => SceneManager.SetActiveScene(SceneManager.GetSceneByName(scene.SceneName));
+            asyncOperation.completed += a => SetActiveScene(scene);
         }
     }
 
+    /// <summary>
+    /// Unloads the Scene.
+    /// </summary>
+    /// <param name="scene">Scene to be unloaded.</param>
     public void Unload(SceneField scene)
     {
-        if (IsSceneActive(scene))
+        if (IsSceneLoaded(scene))
         {
-            MarkSceneActive(scene, false);
+            MarkSceneAsLoaded(scene, false);
             Unload(scene.SceneName);
         }
     }
 
+    /// <summary>
+    /// Unloads the Scene.
+    /// </summary>
+    /// <param name="sceneName">The name of the Scene file (without the '.unity' extension).</param>
     public void Unload(string sceneName)
     {
         SceneManager.UnloadSceneAsync(sceneName);
     }
 
-    public bool IsSceneActive(SceneField scene)
+    /// <summary>
+    /// Checks if the Scene is currently loaded in the game.
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <returns></returns>
+    public bool IsSceneLoaded(SceneField scene)
     {
-        return activeScenes[scene];
+        return loadedScenes[scene];
     }
 
-    public void MarkSceneActive(SceneField scene, bool isActive)
+    /// <summary>
+    /// Unloads all managed Scenes that are not contained inside the visibleScenes array.
+    /// </summary>
+    /// <param name="visibleScenes"></param>
+    private void UnloadAllNonVisible(SceneField[] visibleScenes)
     {
-        activeScenes[scene] = isActive;
+        for (int i = 0; i < managedScenes.Length; i++)
+        {
+            bool unloadThisScene = true;
+
+            for (int j = 0; j < visibleScenes.Length; j++)
+            {
+                if (managedScenes[i].SceneName == visibleScenes[j].SceneName)
+                    unloadThisScene = false;
+            }
+
+            if (unloadThisScene)
+            {
+                Unload(managedScenes[i]);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Sets the Scene as active (The active Scene is the Scene which will be used as the target for new GameObjects instantiated by scripts and from what scene the lighting settings are used).
+    /// </summary>
+    /// <param name="scene"></param>
+    private void SetActiveScene(SceneField scene)
+    {
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(scene.SceneName));
+    }
+
+    private void MarkSceneAsLoaded(SceneField scene, bool isActive)
+    {
+        if (scene != null)
+            loadedScenes[scene] = isActive;
     }
 
     private void FillActiveScenesDictionary()
     {
         for (int i = 0; i < managedScenes.Length; i++)
         {
-            if (!activeScenes.ContainsKey(managedScenes[i].SceneName))
-                activeScenes.Add(managedScenes[i].SceneName, false);
+            if (!loadedScenes.ContainsKey(managedScenes[i].SceneName))
+                loadedScenes.Add(managedScenes[i].SceneName, false);
         }
 
         for (int i = 0; i < loadScenesOnAwake.Length; i++)
         {
-            if (!activeScenes.ContainsKey(loadScenesOnAwake[i].SceneName))
-                activeScenes.Add(loadScenesOnAwake[i].SceneName, false);
+            if (!loadedScenes.ContainsKey(loadScenesOnAwake[i].SceneName))
+                loadedScenes.Add(loadScenesOnAwake[i].SceneName, false);
         }
     }
 
