@@ -2,14 +2,16 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Manager used to load Scenes using Additive mode. 
+/// ALL Scenes that you want to load or unload MUST be specified on the Inspector (SceneField[] managedScenes)
+/// </summary>
 public class AdditiveSceneManager : MonoBehaviour
 {
-    [Tooltip("Attach scenes that may be unloaded during runtime using this Manager.")]
+    [Tooltip("Attach Scenes that may be loaded/unloaded during runtime using this Manager.")]
     public SceneField[] managedScenes;
-    [Tooltip("Optional feature. The first scene of the list will be set as the Active scene.")]
+    [Tooltip("Optional feature. The first Scene of the list will be set as the active scene.\n\n(The active Scene is the Scene which will be used as the target for new GameObjects instantiated by scripts and from what scene the lighting settings are used).")]
     public SceneField[] loadScenesOnAwake;
-
-    private int current;
 
     public static AdditiveSceneManager Instance;
     private static Dictionary<string, bool> loadedScenes = new Dictionary<string, bool>();
@@ -17,7 +19,7 @@ public class AdditiveSceneManager : MonoBehaviour
     private void Awake()
     {
         SetThisAsSingleton();
-        FillActiveScenesDictionary();
+        FillLoadedScenesDictionary();
 
         int preloadScene = SceneManager.GetActiveScene().buildIndex;
 
@@ -150,7 +152,10 @@ public class AdditiveSceneManager : MonoBehaviour
             loadedScenes[scene] = isActive;
     }
 
-    private void FillActiveScenesDictionary()
+    /// <summary>
+    /// Initializes the dictionary used by this Manager to determine whether a Scene is currently loaded or not.
+    /// </summary>
+    private void FillLoadedScenesDictionary()
     {
         for (int i = 0; i < managedScenes.Length; i++)
         {
