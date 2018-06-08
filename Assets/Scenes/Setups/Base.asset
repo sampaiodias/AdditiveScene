@@ -8,13 +8,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: Base Setup
-  m_EditorClassIdentifier: Assembly-CSharp-Editor::SceneSetupFile
+  m_Script: {fileID: 11500000, guid: 087861398db36414992fafd1dd8c9ccf, type: 3}
+  m_Name: Base
+  m_EditorClassIdentifier: 
   setup:
   - m_Path: Assets/Scenes/_preload.unity
     m_IsLoaded: 1
-    m_IsActive: 0
+    m_IsActive: 1
   - m_Path: Assets/Scenes/PlayerScene.unity
     m_IsLoaded: 1
-    m_IsActive: 1
+    m_IsActive: 0
