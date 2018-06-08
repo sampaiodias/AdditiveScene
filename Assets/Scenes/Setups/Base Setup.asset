@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Base Setup
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::SceneSetupFile
+  setup:
+  - m_Path: Assets/Scenes/_preload.unity
+    m_IsLoaded: 1
+    m_IsActive: 1
+  - m_Path: Assets/Scenes/PlayerScene.unity
+    m_IsLoaded: 1
+    m_IsActive: 0
