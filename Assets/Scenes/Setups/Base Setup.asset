@@ -14,7 +14,7 @@ MonoBehaviour:
   setup:
   - m_Path: Assets/Scenes/_preload.unity
     m_IsLoaded: 1
-    m_IsActive: 1
+    m_IsActive: 0
   - m_Path: Assets/Scenes/PlayerScene.unity
     m_IsLoaded: 1
-    m_IsActive: 0
+    m_IsActive: 1
